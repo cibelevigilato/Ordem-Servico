@@ -5,6 +5,7 @@
 package br.eti.cibele.OrdemServico.api.controller;
 
 import br.eti.cibele.OrdemServico.Repository.ClienteRepository;
+import br.eti.cibele.OrdemServico.Repository.domain.service.ClienteService;
 import br.eti.cibele.OrdemServico.domain.model.Cliente;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -35,6 +36,8 @@ public class ClienteController {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Autowired ClienteService clienteService;
+    
     @GetMapping("/clientes")
     public List<Cliente> listas() {
         return clienteRepository.findByNome("KGe");
@@ -53,7 +56,7 @@ public class ClienteController {
    @PostMapping("/clientes")
    @ResponseStatus(HttpStatus.CREATED)
    public Cliente adicionar (@Valid @RequestBody Cliente cliente){
-       return clienteRepository.save(cliente);
+        return clienteService.salvar(cliente);
    }
     @PutMapping("/clientes/{clienteID}")
     public ResponseEntity <Cliente> atualizar(@Valid @PathVariable Long clienteID,@RequestBody Cliente cliente){
@@ -62,7 +65,7 @@ public class ClienteController {
         return ResponseEntity.notFound().build();
     }
     cliente.setId(clienteID);
-    cliente =  clienteRepository.save(cliente);
+    cliente =  clienteService.salvar(cliente);
     return ResponseEntity.ok(cliente);
     }
     @DeleteMapping("/clientes/{clientesID}")
@@ -70,7 +73,7 @@ public class ClienteController {
         if (!clienteRepository.existsById(clienteID)){
             return ResponseEntity.notFound().build();
         }
-        clienteRepository.deleteById(clienteID);
+        clienteService.excluir(clienteID);
         return ResponseEntity.noContent().build();
         }
     }
