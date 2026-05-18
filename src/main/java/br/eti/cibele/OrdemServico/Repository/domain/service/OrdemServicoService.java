@@ -9,6 +9,7 @@ import br.eti.cibele.OrdemServico.domain.model.OrdemServico;
 import br.eti.cibele.OrdemServico.domain.model.StatusOrdemServico;
 import br.eti.cibele.OrdemServico.domain.repository.OrdemServicoRepository;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,4 +54,14 @@ public Optional<OrdemServico> atualizaStatus (Long ordemServicoID, StatusOrdemSe
     } 
 }
 
+    
 }
+
+
+
+
+
+
+
+
+

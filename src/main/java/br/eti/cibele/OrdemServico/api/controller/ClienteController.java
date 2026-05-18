@@ -7,6 +7,8 @@ package br.eti.cibele.OrdemServico.api.controller;
 import br.eti.cibele.OrdemServico.Repository.ClienteRepository;
 import br.eti.cibele.OrdemServico.Repository.domain.service.ClienteService;
 import br.eti.cibele.OrdemServico.domain.model.Cliente;
+import br.eti.cibele.OrdemServico.domain.model.OrdemServico;
+import br.eti.cibele.OrdemServico.domain.repository.OrdemServicoRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.validation.Valid;
@@ -30,53 +32,89 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author digma
  */
+
+// inicio -------------------------------->
 @RestController
+@RequestMapping("/ordem-servico")
 public class ClienteController {
 
     @Autowired
     private ClienteRepository clienteRepository;
 
-    @Autowired ClienteService clienteService;
+    @Autowired
+    ClienteService clienteService;
+        
+        
+    @Autowired
+    private OrdemServicoRepository ordemServicoRepository;
+    //ignora isso prof ------------------------------------->
+    //@GetMapping("/clientes")
+    //public List<Cliente> listas() {
+    // return clienteRepository.findByNome("KGe");
+    //}
     
-    @GetMapping("/clientes")
-    public List<Cliente> listas() {
-        return clienteRepository.findByNome("KGe");
-
-    }
-
+    
+    
+    // isso aqui procura por id ----------------------------->
+   
     @GetMapping("/clientes/{clienteID}")
-    public ResponseEntity<Cliente>  buscar (@PathVariable Long clienteID) {
+    public ResponseEntity<Cliente> buscar(@PathVariable Long clienteID) {
         Optional<Cliente> cliente = clienteRepository.findById(clienteID);
-        if (cliente.isPresent()){
+        if (cliente.isPresent()) {
             return ResponseEntity.ok(cliente.get());
-        }else{
+        } else {
             return ResponseEntity.notFound().build();
         }
     }
-   @PostMapping("/clientes")
-   @ResponseStatus(HttpStatus.CREATED)
-   public Cliente adicionar (@Valid @RequestBody Cliente cliente){
-        return clienteService.salvar(cliente);
-   }
-    @PutMapping("/clientes/{clienteID}")
-    public ResponseEntity <Cliente> atualizar(@Valid @PathVariable Long clienteID,@RequestBody Cliente cliente){
+
+    
+    // esse aqui add ------------------------------>
    
-    if (!clienteRepository.existsById(clienteID)){
-        return ResponseEntity.notFound().build();
+    @PostMapping("/clientes")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Cliente adicionar(@Valid @RequestBody Cliente cliente) {
+        return clienteService.salvar(cliente);
     }
-    cliente.setId(clienteID);
-    cliente =  clienteService.salvar(cliente);
-    return ResponseEntity.ok(cliente);
+
+    
+    //esse aqui atualiza -------------------------------->
+    
+    @PutMapping("/clientes/{clienteID}")
+    public ResponseEntity<Cliente> atualizar(@Valid @PathVariable Long clienteID, @RequestBody Cliente cliente) {
+
+        if (!clienteRepository.existsById(clienteID)) {
+            return ResponseEntity.notFound().build();
+        }
+        cliente.setId(clienteID);
+        cliente = clienteService.salvar(cliente);
+        return ResponseEntity.ok(cliente);
     }
-    @DeleteMapping("/clientes/{clientesID}")
-    public ResponseEntity<Void> excluir(@PathVariable Long clienteID ){
-        if (!clienteRepository.existsById(clienteID)){
+
+    
+    // esse aqui exclui --------------------------------------->
+    
+    @DeleteMapping("/clientes/{clienteID}")
+    public ResponseEntity<Void> excluir(@PathVariable Long clienteID) {
+        if (!clienteRepository.existsById(clienteID)) {
             return ResponseEntity.notFound().build();
         }
         clienteService.excluir(clienteID);
         return ResponseEntity.noContent().build();
-        }
     }
-    
-    
 
+    // esse aqui lista todos os clientes ----------------------------->
+   
+    @GetMapping("/clientes")
+    public List<Cliente> listas() {
+        return clienteRepository.findAll();
+
+    }
+@GetMapping("/clientes/{clienteId}/ordens")
+public ResponseEntity<List<OrdemServico>> ListarordensPorcliente(@PathVariable Long clienteId){
+        if (!clienteRepository.existsById(clienteId)){
+            return ResponseEntity.notFound().build();
+        }
+        List<OrdemServico>ordens = ordemServicoRepository.findByClienteId(clienteId);
+        return ResponseEntity.ok(ordens);
+}
+}   //------------------------------------------------------------->

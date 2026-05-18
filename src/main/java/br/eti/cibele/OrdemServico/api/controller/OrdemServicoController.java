@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/ordem-servico")
-public class OrdemServiçoController {
+public class OrdemServicoController {
     @Autowired
     private OrdemServicoService ordemServicoService;
     
