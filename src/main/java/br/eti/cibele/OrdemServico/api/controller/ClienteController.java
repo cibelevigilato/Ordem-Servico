@@ -8,6 +8,7 @@ import br.eti.cibele.OrdemServico.Repository.ClienteRepository;
 import br.eti.cibele.OrdemServico.Repository.domain.service.ClienteService;
 import br.eti.cibele.OrdemServico.domain.model.Cliente;
 import br.eti.cibele.OrdemServico.domain.model.OrdemServico;
+import br.eti.cibele.OrdemServico.domain.model.StatusOrdemServico;
 import br.eti.cibele.OrdemServico.domain.repository.OrdemServicoRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -32,8 +33,9 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author digma
  */
-
 // inicio -------------------------------->
+
+
 @RestController
 @RequestMapping("/ordem-servico")
 public class ClienteController {
@@ -43,8 +45,7 @@ public class ClienteController {
 
     @Autowired
     ClienteService clienteService;
-        
-        
+
     @Autowired
     private OrdemServicoRepository ordemServicoRepository;
     //ignora isso prof ------------------------------------->
@@ -52,11 +53,8 @@ public class ClienteController {
     //public List<Cliente> listas() {
     // return clienteRepository.findByNome("KGe");
     //}
-    
-    
-    
+
     // isso aqui procura por id ----------------------------->
-   
     @GetMapping("/clientes/{clienteID}")
     public ResponseEntity<Cliente> buscar(@PathVariable Long clienteID) {
         Optional<Cliente> cliente = clienteRepository.findById(clienteID);
@@ -67,18 +65,14 @@ public class ClienteController {
         }
     }
 
-    
     // esse aqui add ------------------------------>
-   
     @PostMapping("/clientes")
     @ResponseStatus(HttpStatus.CREATED)
     public Cliente adicionar(@Valid @RequestBody Cliente cliente) {
         return clienteService.salvar(cliente);
     }
 
-    
     //esse aqui atualiza -------------------------------->
-    
     @PutMapping("/clientes/{clienteID}")
     public ResponseEntity<Cliente> atualizar(@Valid @PathVariable Long clienteID, @RequestBody Cliente cliente) {
 
@@ -90,9 +84,7 @@ public class ClienteController {
         return ResponseEntity.ok(cliente);
     }
 
-    
     // esse aqui exclui --------------------------------------->
-    
     @DeleteMapping("/clientes/{clienteID}")
     public ResponseEntity<Void> excluir(@PathVariable Long clienteID) {
         if (!clienteRepository.existsById(clienteID)) {
@@ -103,18 +95,10 @@ public class ClienteController {
     }
 
     // esse aqui lista todos os clientes ----------------------------->
-   
     @GetMapping("/clientes")
     public List<Cliente> listas() {
         return clienteRepository.findAll();
 
     }
-@GetMapping("/clientes/{clienteId}/ordens")
-public ResponseEntity<List<OrdemServico>> ListarordensPorcliente(@PathVariable Long clienteId){
-        if (!clienteRepository.existsById(clienteId)){
-            return ResponseEntity.notFound().build();
-        }
-        List<OrdemServico>ordens = ordemServicoRepository.findByClienteId(clienteId);
-        return ResponseEntity.ok(ordens);
-}
-}   //------------------------------------------------------------->
+
+}  

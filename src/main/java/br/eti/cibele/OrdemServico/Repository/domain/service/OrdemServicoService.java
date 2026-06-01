@@ -20,48 +20,94 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class OrdemServicoService {
+
     @Autowired
     private OrdemServicoRepository ordemServicoRepository;
-    
-    public OrdemServico criar (OrdemServico ordemServico) {
-        ordemServico.setStatus(StatusOrdemServico.ABERTA);
-        ordemServico.setDataAbertura(LocalDateTime.now());
-        
-        return ordemServicoRepository.save(ordemServico);
+
+    public List<OrdemServico> listarAbertasPorCliente(Long clienteId) {
+
+        return ordemServicoRepository
+                .findByClienteIdAndStatus(clienteId, StatusOrdemServico.ABERTA);
+
     }
 
-public Optional<OrdemServico> atualizaStatus (Long ordemServicoID, StatusOrdemServico status) {
-    
-    Optional<OrdemServico> optOrdemServico = ordemServicoRepository.findById(ordemServicoID);
+    public List<OrdemServico> listarFinalizadasPorCliente(Long clienteId) {
 
+        return ordemServicoRepository
+                .findByClienteIdAndStatus(clienteId, StatusOrdemServico.FINALIZADA);
 
-   if (optOrdemServico.isPresent()) { 
-        OrdemServico ordemServico = optOrdemServico.get();
-       
-        if (ordemServico.getStatus()== StatusOrdemServico.ABERTA && status != StatusOrdemServico.ABERTA){
-           
-           ordemServico.setStatus(status);
-           ordemServico.setDataAbertura(LocalDateTime.now());
-           ordemServicoRepository.save(ordemServico);
-           return Optional.of(ordemServico);
-           
-        } else{ 
+    }
 
-            return Optional.empty();
+    public List<OrdemServico> listarComComentarios() {
+
+        return ordemServicoRepository.findByComentariosIsNotEmpty();
+
+    }
+
+    public List<OrdemServico> listarSemComentarios() {
+
+        return ordemServicoRepository.findByComentariosIsEmpty();
+
+    }
+
+    public List<OrdemServico> listarAbertasComComentarios() {
+
+        return ordemServicoRepository
+                .findByStatusAndComentariosIsNotEmpty(StatusOrdemServico.ABERTA);
+    }
+
+    public List<OrdemServico> listarAbertasSemComentarios() {
+
+        return ordemServicoRepository
+                .findByStatusAndComentariosIsEmpty(StatusOrdemServico.ABERTA);
+
+    }
+
+    public List<OrdemServico> listarFinalizadasComComentarios() {
+
+        return ordemServicoRepository
+                .findByStatusAndComentariosIsNotEmpty(StatusOrdemServico.FINALIZADA);
+
+    }
+
+    public List<OrdemServico> listarFinalizadasSemComentarios() {
+
+        return ordemServicoRepository
+                .findByStatusAndComentariosIsEmpty(StatusOrdemServico.FINALIZADA);
+
+    }
+
+//==================================================================
+    public OrdemServico criar(OrdemServico ordemServico) {
+        ordemServico.setStatus(StatusOrdemServico.ABERTA);
+        ordemServico.setDataAbertura(LocalDateTime.now());
+
+        return ordemServicoRepository.save(ordemServico);
+
+    }
+//====================================================================================================
+
+    public Optional<OrdemServico> atualizaStatus(Long ordemServicoID, StatusOrdemServico status) {
+
+        Optional<OrdemServico> optOrdemServico = ordemServicoRepository.findById(ordemServicoID);
+
+        if (optOrdemServico.isPresent()) {
+            OrdemServico ordemServico = optOrdemServico.get();
+
+            if (ordemServico.getStatus() == StatusOrdemServico.ABERTA && status != StatusOrdemServico.ABERTA) {
+
+                ordemServico.setStatus(status);
+                ordemServico.setDataAbertura(LocalDateTime.now());
+                ordemServicoRepository.save(ordemServico);
+                return Optional.of(ordemServico);
+
+            } else {
+
+                return Optional.empty();
+            }
+        } else {
+            throw new DomainException("Não existe OS com o id" + ordemServicoID);
         }
-     }else{
-        throw new DomainException("Não existe OS com o id" + ordemServicoID);
-    } 
+    }
+
 }
-
-    
-}
-
-
-
-
-
-
-
-
-
